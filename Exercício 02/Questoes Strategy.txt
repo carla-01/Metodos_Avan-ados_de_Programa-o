@@ -1,0 +1,47 @@
+QUESTÕES Strategy
+
+1. Qual problema o padrão Strategy resolve?
+R- O Strategy resolve o problema de ter vários algoritmos (ou variações de um mesmo
+comportamento) misturados dentro de uma única classe, normalmente escolhidos por meio
+de condicionais. Ele encapsula cada algoritmo em uma classe própria, que implementa uma
+interface comum, tornando-os intercambiáveis. Assim, o contexto (Pedido) apenas delega o
+cálculo para a estratégia atual, sem precisar saber como ela funciona, e a estratégia
+pode ser trocada em tempo de execução.
+
+2. O que aconteceria se usássemos apenas if/else?
+R- A classe Pedido cresceria a cada nova regra, ficando grande, difícil de ler e de manter.
+Toda nova forma de frete exigiria modificar uma classe já testada (violando o princípio
+Aberto/Fechado), aumentando o risco de introduzir bugs nas regras existentes e também não 
+poderiam ser reutilizadas em outras partes do sistema e nem testadas isoladamente.
+
+3. Como o sistema fica aberto para extensão?
+R- Para inclusão de  uma nova regra basta criar uma nova classe que implemente a interface
+FreteStrategy e foi feito exatamente com o FreteInternacional: foi criada a classe 
+FreteInternacional (peso * 12 + 25.0) sem alterar nenhuma linha de Pedido, Sedex,
+PAC, RetiradaNaLoja ou TransportadoraExpressa e o  sistema fica aberto para extensão
+(novas estratégias) e fechado para modificação (código existente fica intacto), atendendo ao
+Princípio Aberto/Fechado.
+
+4. O que acontece se cada país tiver uma regra de cálculo de frete diferente no caso de
+frete internacional?
+R- Com if/else, o FreteInternacional viraria outro bloco enorme de condicionais por país, 
+já com Strategy:
+- Seria Criado uma estratégia para cada país (ex.: FreteInternacionalEUA, FreteInternacionalJapao),
+  todas implementando FreteStrategy ou parametrizar a estratégia internacional com os dados do país 
+  (taxa de importação e valor por kg), por exemplo new FreteInternacional(taxaImportacao, valorPorKg), quando
+  as regras diferem apenas nos valores.
+- Usar um mapa/registro (ou uma Factory) que associe o país à estratégia correspondente,
+  evitando que a escolha volte a ser feita com if/else.
+
+5. Em quais outros cenários Strategy poderia ser utilizado?
+ R- 
+  - Formas de pagamento (cartão de crédito, boleto, Pix, PayPal).
+  - Cálculo de descontos e promoções (Black Friday, cliente VIP, cupom).
+  - Cálculo de impostos conforme estado/país ou regime tributário.
+  - Algoritmos de ordenação ou de busca escolhidos conforme o volume de dados.
+  - Compressão de arquivos (ZIP, RAR, GZIP) e criptografia (AES, RSA).
+  - Exportação de relatórios (PDF, CSV, Excel, JSON).
+  - Validação de dados (CPF, CNPJ, e-mail).
+  - Estratégias de autenticação (senha, token, OAuth).
+  - Rotas em aplicativos de mapas (carro, a pé, bicicleta, transporte público).
+  - Comportamento de personagens/IA em jogos (agressivo, defensivo).

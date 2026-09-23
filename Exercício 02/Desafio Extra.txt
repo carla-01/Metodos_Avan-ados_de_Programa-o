@@ -1,0 +1,35 @@
+DESAFIO EXTRA - Regras promocionais (ex.: Frete grátis acima de R$ 399)
+
+1. Essas regras são novas estratégias de cálculo ou promoções?
+R- São promoções, elas não definem uma nova forma de calcular o frete, elas atuam SOBRE uma estratégia já existente,
+modificando o resultado dela sob determinada condição. Um pedido via Sedex com compra
+acima de R$ 399 continua sendo Sedex, apenas com a promoção aplicada.
+
+2. Elas deveriam modificar Sedex, PAC, Internacional e demais regras de cálculo?
+R- Não, se cada estratégia tivesse que verificar "valor da compra > 399", a mesma regra
+ficaria com duplicação em todas as classes, e toda nova promoção exigiria alterar todas as
+estratégias, violando o princípio aberto/fechado e o princípio da responsabilidade única.
+
+
+3. Como evitar alterar todas as classes já implementadas?
+R- Usando o padrão Decorator em conjunto com o Strategy,e então cria-se uma classe de promoção
+que também implementa FreteStrategy e "empacota" uma estratégia existente:
+
+    public class PromocaoFreteGratis implements FreteStrategy {
+        private final FreteStrategy estrategiaBase;
+        private final double valorCompra;
+        private final double valorMinimo;
+        ...
+        public double calcularFrete(double peso) {
+            if (valorCompra > valorMinimo) return 0;
+            return estrategiaBase.calcularFrete(peso);
+        }
+    }
+
+Uso:
+    pedido.setEstrategiaFrete(new PromocaoFreteGratis(new Sedex(), 450.0, 399.0));
+
+Como o decorator implementa a mesma interface, o Pedido não percebe diferença, e a
+promoção funciona com qualquer estratégia (Sedex, PAC) sem alterar nenhuma delas, 
+várias promoções podem inclusive ser empilhadas uma decorando a outra.
+

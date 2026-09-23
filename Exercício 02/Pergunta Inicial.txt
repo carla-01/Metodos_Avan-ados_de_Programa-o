@@ -1,0 +1,18 @@
+PERGUNTA: O que acontece com a classe Pedido toda vez que uma nova forma de frete
+precisa ser adicionada? Em outras palavras, qual o problema com esta solução?
+
+R - Toda vez que surge uma nova forma de frete, a classe Pedido precisa ser aberta e
+modificada: é necessário acrescentar mais um "else if" no método calcularFrete().
+
+R- Problemas dessa solução:
+  - Viola o Princípio Aberto/Fechado (OCP): a classe não está fechada para modificação,
+    pois cada nova regra exige alterar código que já funciona e já foi testado.
+  - Viola o Princípio da Responsabilidade Única (SRP): Pedido passa a conhecer os
+    detalhes de todas as regras de frete, além de representar o pedido.
+  - Alto acoplamento e baixa coesão: todas as regras ficam concentradas em um único método,
+    que cresce indefinidamente e fica cada vez mais difícil de ler e manter.
+  - Maior risco de erros: ao mexer no if/else para incluir uma regra, é possível quebrar
+    as regras existentes, obrigando a retestar todas elas.
+  - Uso de Strings ("SEDEX", "PAC"...) para escolher a regra é frágil: um erro de
+    digitação só é descoberto em tempo de execução (IllegalArgumentException).
+  - Não é possível reutilizar ou testar cada regra de forma isolada.
