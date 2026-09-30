@@ -1,22 +1,34 @@
-//usa  estratégia de frete que pode ser trocada em tempo de execução
-public class Pedido {
-    private double peso;
-    private FreteStrategy estrategiaFrete;
+import java.util.ArrayList;
+import java.util.List;
 
-    public Pedido(double peso, FreteStrategy estrategiaFrete) {
-        this.peso = peso;
-        this.estrategiaFrete = estrategiaFrete;
+// subject concreto: avisa todos os observadores quando o status muda
+public class Pedido implements Subject {
+    private List<Observer> observadores = new ArrayList<>();
+    private StatusPedido status = StatusPedido.RECEBIDO;
+
+    @Override
+    public void registerObserver(Observer observer) {
+        observadores.add(observer);
     }
 
-    public void setEstrategiaFrete(FreteStrategy estrategiaFrete) {
-        this.estrategiaFrete = estrategiaFrete;
+    @Override
+    public void removeObserver(Observer observer) {
+        observadores.remove(observer);
     }
 
-    public double calcularFrete() {
-        return estrategiaFrete.calcularFrete(peso);
+    @Override
+    public void notifyObservers() {
+        for (Observer observer : observadores) {
+            observer.update(this);
+        }
     }
 
-    public double getPeso() {
-        return peso;
+    public void setStatus(StatusPedido status) {
+        this.status = status;
+        notifyObservers();
+    }
+
+    public StatusPedido getStatus() {
+        return status;
     }
 }
