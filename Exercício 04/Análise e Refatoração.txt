@@ -1,0 +1,25 @@
+1ª Parte - Análise e refatoração
+
+Analisando o código original, o primeiro problema que aparece é a duplicação. As classes MissaoCombate e MissaoExploracao repetem quase tudo: preparar a missão, verificar os equipamentos, mostrar a recompensa e finalizar. A única coisa que muda entre elas é a ação e o valor da recompensa. Então, se um dia a sequência da missão mudar, vai ser preciso alterar todas as classes, e é fácil esquecer alguma.
+
+Também não existe nada que garanta que as missões sigam a mesma ordem. Cada classe escreve o seu próprio executar() do começo ao fim, então uma missão nova poderia pular ou trocar uma etapa sem ninguém perceber.
+
+Outro ponto é que as missões não têm uma superclasse ou interface em comum. Por isso o GerenciadorMissoes precisa trabalhar com as classes concretas, fazendo new MissaoCombate() e new MissaoExploracao() diretamente. Ele acaba com duas responsabilidades ao mesmo tempo: decidir qual missão criar e executar essa missão. E essa decisão fica toda num if/else baseado em String. Cada nova modalidade obriga a mexer nesse if/else, e um erro de digitação no tipo só é descoberto quando o programa roda.
+
+Para resolver isso usei os dois padrões estudados na unidade.
+
+Com o Template Method, criei a classe abstrata Missao. O método executar() dela é final e define a sequência que toda missão segue: preparar, verificar equipamentos, realizar a ação, mostrar a recompensa e finalizar. As etapas que são iguais para todas ficam implementadas uma vez só na superclasse, e as que variam (realizarAcao() e getRecompensa()) são abstratas. Assim, MissaoCombate e MissaoExploracao só precisam dizer o que fazem e quanto valem. Isso garante a mesma sequência para todas as missões, mantém o comportamento de cada modalidade separado na sua própria classe e preserva exatamente a saída do sistema original.
+
+Com o Factory Method, transformei o GerenciadorMissoes em uma classe abstrata com o método criarMissao(), que devolve uma Missao. O iniciarMissao() chama esse método e depois executa a missão, sem saber qual é a classe concreta. Quem decide qual missão criar são as subclasses GerenciadorMissaoCombate e GerenciadorMissaoExploracao. Dessa forma a lógica de execução depende só da abstração e a decisão sobre o tipo concreto não fica mais concentrada num if/else. Como o tipo agora é escolhido pela classe criadora e não por uma String, a mensagem "Tipo de missão inválido!" deixou de ser necessária, já que um tipo que não existe nem compila.
+
+
+2ª Parte - Evolução do sistema
+
+Para adicionar a Missão de Resgate não foi preciso alterar nenhuma classe que já existia. Criei a MissaoResgate, que estende Missao e só implementa a ação ("Resgatando personagem!") e a recompensa de 150 pontos. A preparação e a sequência já vêm prontas da superclasse. Também criei o GerenciadorMissaoResgate, que estende GerenciadorMissoes e cria uma MissaoResgate.
+
+Isso mostra o ganho da refatoração: o sistema ficou aberto para extensão e fechado para modificação.
+
+
+Para executar, dentro da pasta src:
+javac -encoding UTF-8 *.java
+java Main
